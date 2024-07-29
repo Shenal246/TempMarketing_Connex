@@ -1,0 +1,18 @@
+.table-head {
+    background-color: #003366;
+    color: white;
+  }
+  
+  .table-head .MuiTableCell-root {
+    color: white;
+  }
+  
+  .table-body {
+    background-color: white;
+    color: black;
+  }
+  
+  .table-body .MuiTableCell-root {
+    color: black;
+  }
+  

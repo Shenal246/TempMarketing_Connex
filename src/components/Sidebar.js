@@ -5,6 +5,7 @@ import VideoLibraryIcon from '@mui/icons-material/VideoLibrary';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import GroupIcon from '@mui/icons-material/Group';
 import '../styles/Sidebar.css';
+import ConnexLogo from '../images/logo/ConnexIT.png';
 
 const Sidebar = () => {
   const location = useLocation();
@@ -16,14 +17,13 @@ const Sidebar = () => {
         className="drawer"
       >
         <div className="logo-box">
-          <img src="/logo/ConnexIT.png" alt="Connex Logo" className="logo" />
+          <img src={ConnexLogo} alt="Connex Logo" className="logo" />
         </div>
-        {/* <Toolbar /> */}
         <Box sx={{ overflow: 'auto' }}>
           <List>
-            <ListItem button component={Link} to="/add-videos" selected={location.pathname === '/add-videos'}>
+            <ListItem button component={Link} to="/video-management" selected={location.pathname.startsWith('/video-management')}>
               <ListItemIcon><VideoLibraryIcon className="icon" /></ListItemIcon>
-              <ListItemText primary="Add Videos" />
+              <ListItemText primary="Video Management" />
             </ListItem>
             <ListItem button component={Link} to="/add-products" selected={location.pathname === '/add-products'}>
               <ListItemIcon><AddBoxIcon className="icon" /></ListItemIcon>
@@ -36,10 +36,10 @@ const Sidebar = () => {
           </List>
         </Box>
       </Drawer>
-      <Box component="main" className="main-content">
+      <main className="content">
         <Toolbar />
         <Outlet />
-      </Box>
+      </main>
     </div>
   );
 };
