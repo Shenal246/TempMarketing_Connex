@@ -1,16 +1,31 @@
 import React, { useState } from 'react';
 import {
-  Tabs, Tab, Box, Typography, TextField, Button, Select, MenuItem,
+  Tabs, Tab, Box, Typography, TextField, InputAdornment, Button, Select, MenuItem,
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-  Paper, Dialog, DialogTitle, DialogContent, DialogActions, FormControl, InputLabel
+  Paper, Dialog, DialogTitle, DialogContent, DialogActions, FormControl, InputLabel,
+  TablePagination
 } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+import SearchIcon from '@mui/icons-material/Search';
 import '../styles/VideoManagement.css';
+
+const initialVideos = [
+  { title: 'React Tutorial', videoLink: 'https://example.com/react', status: 'enabled' },
+  { title: 'Vue.js Guide', videoLink: 'https://example.com/vue', status: 'disabled' },
+  { title: 'Angular Best Practices', videoLink: 'https://example.com/angular', status: 'enabled' },
+  { title: 'JavaScript Basics', videoLink: 'https://example.com/js', status: 'enabled' },
+  { title: 'CSS Flexbox', videoLink: 'https://example.com/css-flexbox', status: 'disabled' },
+  // Add more sample videos as needed
+];
 
 const VideoManagement = () => {
   const [tabIndex, setTabIndex] = useState(0);
-  const [videos, setVideos] = useState([]);
+  const [videos, setVideos] = useState(initialVideos);
   const [open, setOpen] = useState(false);
   const [currentVideo, setCurrentVideo] = useState(null);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const handleTabChange = (event, newValue) => {
     setTabIndex(newValue);
@@ -42,6 +57,25 @@ const VideoManagement = () => {
     setOpen(false);
   };
 
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  const handleSearch = (event) => {
+    setSearchQuery(event.target.value.toLowerCase());
+    setPage(0);
+  };
+
+  const filteredVideos = videos.filter(video => 
+    video.title.toLowerCase().includes(searchQuery) || 
+    video.status.toLowerCase().includes(searchQuery)
+  );
+
   return (
     <Box>
       <Tabs value={tabIndex} onChange={handleTabChange}>
@@ -67,6 +101,22 @@ const VideoManagement = () => {
       {tabIndex === 1 && (
         <Box p={3}>
           <Typography variant="h6">All Videos</Typography>
+          <TextField
+            label="Search"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            value={searchQuery}
+            onChange={handleSearch}
+            placeholder="Search by title or status"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }}
+          />
           <TableContainer component={Paper}>
             <Table>
               <TableHead className="table-head">
@@ -78,19 +128,30 @@ const VideoManagement = () => {
                 </TableRow>
               </TableHead>
               <TableBody className="table-body">
-                {videos.map((video, index) => (
+                {filteredVideos.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((video, index) => (
                   <TableRow key={index}>
                     <TableCell>{video.title}</TableCell>
                     <TableCell>{video.videoLink}</TableCell>
                     <TableCell>{video.status}</TableCell>
                     <TableCell>
-                      <Button variant="contained" color="primary" onClick={() => { setCurrentVideo(video); setOpen(true); }}>Edit</Button>
+                      <EditIcon
+                        style={{ color: '#003366', cursor: 'pointer' }}
+                        onClick={() => { setCurrentVideo(video); setOpen(true); }}
+                      />
                     </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           </TableContainer>
+          <TablePagination
+            component="div"
+            count={filteredVideos.length}
+            page={page}
+            onPageChange={handleChangePage}
+            rowsPerPage={rowsPerPage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
         </Box>
       )}
       <Dialog open={open} onClose={() => setOpen(false)}>
